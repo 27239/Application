@@ -3,6 +3,8 @@
 
 <head>
     <meta charset="utf-8" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <title>Application</title>
     <style>
@@ -11,8 +13,17 @@
             padding: 20px;
             background: #f5f5f5;
             display: flex;
-            flex-direction: column;
-            align-items: center;
+            justify-content: center;
+            align-items: flex-start;
+        }
+
+        .container {
+            display: flex;
+            gap: 20px;
+            align-items: flex-start;
+            width: 100%;
+            max-width: 1200px;
+            flex-wrap: wrap;
         }
 
         form {
@@ -20,8 +31,9 @@
             padding: 20px;
             border-radius: 10px;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
-            width: 100%;
-            max-width: 480px;
+            flex: 1;
+            min-width: 320px;
+            max-width: 450px;
             box-sizing: border-box;
         }
 
@@ -43,12 +55,20 @@
             border: none;
         }
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            display: block;
+        .table-container {
+            flex: 3;
+            min-width: 480px;
+            background: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
             overflow-x: auto;
-            margin-top: 18px;
+        }
+
+        table {
+            width: 50px;
+            border-collapse: collapse;
+            margin-top: 20px;
         }
 
         th,
@@ -90,78 +110,73 @@
             padding: 6px 10px;
         }
 
-        @media (max-width:600px) {
-
-            input,
-            textarea,
-            button {
-                font-size: 14px;
-                padding: 8px
+        @media (max-width: 800px) {
+            .container {
+                flex-direction: column;
             }
 
-            th,
-            td {
-                font-size: 12px;
-                padding: 6px
+            .table-container {
+                min-width: 100%;
             }
         }
     </style>
 </head>
 
 <body>
+    <div class="container">
+        <!-- LEFT: FORM -->
+        <form id="dataForm" action="/post" method="post" onsubmit="return false;">
+            <h2>Data Entry Form</h2>
+            <label>Sr. No.:</label>
+            <input type="text" id="srNo" readonly>
 
-    <h2>Data Entry Form</h2>
-    <form id="dataForm" onsubmit="return false;">
-        <label>Sr. No.:</label>
-        <input type="text" id="srNo" readonly>
+            <label>Date:</label>
+            <input type="date" id="dateInput" required>
 
-        <label>Date:</label>
-        <input type="date" id="dateInput" required>
+            <label>Name:</label>
+            <input type="text" id="nameInput" placeholder="Enter Your Name..." required>
 
-        <label>Name:</label>
-        <input type="text" id="nameInput" placeholder="Enter Your Name..." required>
+            <label>Phone Number:</label>
+            <input type="tel" id="phoneInput" placeholder="+91 9876543210" required>
 
-        <label>Phone Number:</label>
-        <input type="tel" id="phoneInput" placeholder="+91 9876543210" required>
+            <label>System Type And Brand:</label>
+            <input type="text" id="productInput" placeholder="Enter Your Product..." required>
 
-        <label>System Type:</label>
-        <input type="text" id="productInput" placeholder="Enter Your Product..." required>
 
-        <label>Brand:</label>
-        <input type="text" id="cmp" placeholder="Enter Company..." required>
+            <label>Model Number:</label>
+            <input type="text" id="mn" placeholder="Enter Model.No..." required>
 
-        <label>Model Number:</label>
-        <input type="text" id="mn" placeholder="Enter Model.No..." required>
+            <label for="description">Description:</label>
+            <textarea id="fip" name="description" rows="3" placeholder="Write your description here..."></textarea>
 
-        <label for="description">Description:</label>
-        <textarea id="fip" name="description" rows="3" placeholder="Write your description here..."></textarea>
+            <div style="display:flex; gap:10px;">
+                <button type="button" id="addBtn">Add Entry</button>
+                <button type="button" id="updateBtn" style="display:none;background:#28a745;">Update Entry</button>
+                <button type="button" id="cancelBtn" style="display:none;background:#6c757d;">Cancel Edit</button>
+            </div>
+        </form>
 
-        <div style="display:flex; gap:10px;">
-            <button type="button" id="addBtn">Add Entry</button>
-            <button type="button" id="updateBtn" style="display:none;background:#28a745;">Update Entry</button>
-            <button type="button" id="cancelBtn" style="display:none;background:#6c757d;">Cancel Edit</button>
+        <!-- RIGHT: TABLE -->
+        <div class="table-container">
+            <h3>Entries</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Sr. No.</th>
+                        <th>Date</th>
+                        <th>Name</th>
+                        <th>Phone</th>
+                        <th>Product</th>
+                        <th>Model</th>
+                        <th>Fault</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody id="tableBody"></tbody>
+            </table>
         </div>
-    </form>
-
-    <h3>Entries</h3>
-    <div style="width:100%; overflow-x:auto; max-width:1000px;">
-        <table>
-            <thead>
-                <tr>
-                    <th>Sr. No.</th>
-                    <th>Date</th>
-                    <th>Name</th>
-                    <th>Phone</th>
-                    <th>Product</th>
-                    <th>Company</th>
-                    <th>Model</th>
-                    <th>Fault</th>
-                    <th>Action</th>
-                </tr>
-            </thead>
-            <tbody id="tableBody"></tbody>
-        </table>
     </div>
+
 
     <script>
         window.addEventListener('DOMContentLoaded', () => {
@@ -175,7 +190,7 @@
             const nameInput = document.getElementById('nameInput');
             const phoneInput = document.getElementById('phoneInput');
             const productInput = document.getElementById('productInput');
-            const cmp = document.getElementById('cmp');
+
             const mn = document.getElementById('mn');
             const fip = document.getElementById('fip');
 
@@ -206,12 +221,12 @@
         <td>${item.name}</td>
         <td>${item.phone}</td>
         <td>${item.product}</td>
-        <td>${item.company}</td>
+        
         <td>${item.model}</td>
         <td>${item.desc}</td>
         <td>
-          <button class="send-btn small-btn">Send WhatsApp</button><br>
-          <button class="delete-btn small-btn">Delete</button>
+          <button class="send-btn small-btn"><i class="fa-brands fa-whatsapp"></i><br>
+          <button class="delete-btn small-btn"><i class="fa-solid fa-trash"></i></button>
         </td>
       `;
                     tableBody.appendChild(tr);
@@ -225,7 +240,7 @@
                         nameInput.value = item.name;
                         phoneInput.value = item.phone;
                         productInput.value = item.product;
-                        cmp.value = item.company;
+
                         mn.value = item.model;
                         fip.value = item.desc;
 
@@ -240,7 +255,7 @@
                         ev.stopPropagation();
                         const cleanPhone = (item.phone || '').replace(/[^0-9]/g, '');
                         if (!cleanPhone) return alert('Invalid phone number');
-                        const message = `Hello ${item.name}\nDate: ${item.date}\nProduct: ${item.product}\nCompany: ${item.company}\nModel: ${item.model}\nDescription: ${item.desc}`;
+                        const message = `Hello ${item.name}\nDate: ${item.date}\nProduct: ${item.product}\nModel: ${item.model}\nDescription: ${item.desc}`;
                         window.open('https://wa.me/' + cleanPhone + '?text=' + encodeURIComponent(message), '_blank');
                     });
 
@@ -276,15 +291,15 @@
                 const name = nameInput.value.trim();
                 const phone = phoneInput.value.trim();
                 const product = productInput.value.trim();
-                const company = cmp.value.trim();
+
                 const model = mn.value.trim();
                 const desc = fip.value.trim();
 
-                if (!date || !name || !phone || !product || !company || !model) {
+                if (!date || !name || !phone) {
                     return alert('Please fill all required fields!');
                 }
 
-                const obj = { id: generateId(), date, name, phone, product, company, model, desc };
+                const obj = { id: generateId(), date, name, phone, product, model, desc };
                 storedData.push(obj);
                 localStorage.setItem('myData', JSON.stringify(storedData));
 
@@ -303,17 +318,17 @@
                 const name = nameInput.value.trim();
                 const phone = phoneInput.value.trim();
                 const product = productInput.value.trim();
-                const company = cmp.value.trim();
+
                 const model = mn.value.trim();
                 const desc = fip.value.trim();
 
-                if (!date || !name || !phone || !product || !company || !model) {
+                if (!date || !name || !phone) {
                     return alert('Please fill all required fields!');
                 }
 
                 // update data
                 storedData = storedData.map(item =>
-                    item.id === editId ? { id: editId, date, name, phone, product, company, model, desc } : item
+                    item.id === editId ? { id: editId, date, name, phone, product, model, desc } : item
                 );
                 localStorage.setItem('myData', JSON.stringify(storedData));
 
