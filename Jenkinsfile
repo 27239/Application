@@ -26,7 +26,7 @@ pipeline {
             steps {
                 // Replace with the correct relative path of h1.html from the workspace
                 // Example: if h1.html is directly in repo root:
-                sh "cp h1.html ${DEPLOY_DIR}/index.html"
+                sh "cp index.html ${DEPLOY_DIR}/index.html"
                 // If h1.html is inside a folder, for example 'Application/h1.html':
                 // sh "cp Application/h1.html ${DEPLOY_DIR}/index.html"
             }
