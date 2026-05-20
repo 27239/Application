@@ -2,58 +2,43 @@ pipeline {
     agent any
 
     environment {
-        APP_NAME = "Application"
-        BUILD_DIR = "build"
+        DEPLOY_DIR = "/var/www/html"
     }
 
     stages {
-
-        stage('Checkout Code') {
+        stage('Checkout') {
             steps {
-                git branch: 'main',
-                url: 'https://github.com/27239/Application.git'
+                // Checkout code from GitHub
+                git branch: 'main', url: 'https://github.com/27239/Application.git'
             }
         }
 
-        stage('Build') {
+        stage('Verify Files') {
             steps {
-                sh 'cp yagnesh/h1.html /var/www/html/'
+                echo "Current workspace: ${env.WORKSPACE}"
+                // List all files recursively to find h1.html
+                sh 'pwd'
+                sh 'ls -R'
             }
         }
 
-        stage('Test') {
+        stage('Deploy HTML') {
             steps {
-                echo "Running tests..."
-                sh 'echo "All tests passed"'
-            }
-        }
-
-        stage('Package') {
-            steps {
-                echo "Packaging application..."
-                sh 'tar -czf sample-app.tar.gz build/'
-            }
-        }
-
-        stage('Deploy') {
-            steps {
-                echo "Deploying application..."
-                sh 'echo "Deployment completed"'
+                // Replace with the correct relative path of h1.html from the workspace
+                // Example: if h1.html is directly in repo root:
+                sh "cp h1.html ${DEPLOY_DIR}/index.html"
+                // If h1.html is inside a folder, for example 'Application/h1.html':
+                // sh "cp Application/h1.html ${DEPLOY_DIR}/index.html"
             }
         }
     }
 
     post {
-        always {
-            echo 'Pipeline execution completed.'
-        }
-
         success {
-            echo 'Build succeeded!'
+            echo "HTML deployed successfully to ${DEPLOY_DIR}"
         }
-
         failure {
-            echo 'Build failed!'
+            echo "Deployment failed. Check workspace and file paths!"
         }
     }
 }
