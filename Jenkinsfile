@@ -8,7 +8,6 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                // Checkout code from GitHub
                 git branch: 'main', url: 'https://github.com/27239/Application.git'
             }
         }
@@ -16,26 +15,28 @@ pipeline {
         stage('Verify Files') {
             steps {
                 echo "Current workspace: ${env.WORKSPACE}"
-                // List all files recursively to find h1.html
                 sh 'pwd'
                 sh 'ls -R'
             }
         }
 
-        stage('Deploy HTML') {
+        stage('Deploy HTML Files') {
             steps {
-                // Replace with the correct relative path of h1.html from the workspace
-                // Example: if h1.html is directly in repo root:
-                sh "cp index.html ${DEPLOY_DIR}/index.html"
-                // If h1.html is inside a folder, for example 'Application/h1.html':
-                // sh "cp Application/h1.html ${DEPLOY_DIR}/index.html"
+                echo "Deploying all HTML files to ${DEPLOY_DIR}..."
+                // Find all .html files in the workspace and copy them to /var/www/html
+                sh '''
+                    for file in $(find . -name "*.html"); do
+                        echo "Copying $file to ${DEPLOY_DIR}/$(basename $file)"
+                        cp "$file" ${DEPLOY_DIR}/$(basename $file)
+                    done
+                '''
             }
         }
     }
 
     post {
         success {
-            echo "HTML deployed successfully to ${DEPLOY_DIR}"
+            echo "All HTML files deployed successfully!"
         }
         failure {
             echo "Deployment failed. Check workspace and file paths!"
