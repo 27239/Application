@@ -17,7 +17,7 @@ pipeline {
 
         stage('Build') {
             steps {
-                sh 'cp Application/h1.html /var/www/html/'
+                sh 'cp yagnesh/h1.html /var/www/html/'
             }
         }
 
